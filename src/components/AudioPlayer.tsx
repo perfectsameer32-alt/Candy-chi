@@ -20,14 +20,17 @@ export function AudioPlayer() {
     }
   };
 
+  const hasStartedAutoplay = useRef(false);
+
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && !hasStartedAutoplay.current) {
       audioRef.current.volume = 0.3;
       
       const tryPlay = () => {
-        if (audioRef.current && !isPlaying) {
+        if (audioRef.current && !hasStartedAutoplay.current) {
           audioRef.current.play().then(() => {
             setIsPlaying(true);
+            hasStartedAutoplay.current = true;
             // Once played successfully, remove the event listeners
             document.removeEventListener('click', tryPlay);
             document.removeEventListener('touchstart', tryPlay);
@@ -42,9 +45,11 @@ export function AudioPlayer() {
       tryPlay();
 
       // If blocked, wait for the first user interaction anywhere on the screen
-      document.addEventListener('click', tryPlay);
-      document.addEventListener('touchstart', tryPlay);
-      document.addEventListener('keydown', tryPlay);
+      if (!hasStartedAutoplay.current) {
+        document.addEventListener('click', tryPlay);
+        document.addEventListener('touchstart', tryPlay);
+        document.addEventListener('keydown', tryPlay);
+      }
 
       return () => {
         document.removeEventListener('click', tryPlay);
@@ -52,7 +57,7 @@ export function AudioPlayer() {
         document.removeEventListener('keydown', tryPlay);
       };
     }
-  }, [isPlaying]);
+  }, []);
 
   return (
     <div className="fixed top-6 right-6 z-50">
