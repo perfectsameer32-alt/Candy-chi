@@ -21,11 +21,38 @@ export function AudioPlayer() {
   };
 
   useEffect(() => {
-    // Attempt auto-play when component mounts (might be blocked by browser)
     if (audioRef.current) {
       audioRef.current.volume = 0.3;
+      
+      const tryPlay = () => {
+        if (audioRef.current && !isPlaying) {
+          audioRef.current.play().then(() => {
+            setIsPlaying(true);
+            // Once played successfully, remove the event listeners
+            document.removeEventListener('click', tryPlay);
+            document.removeEventListener('touchstart', tryPlay);
+            document.removeEventListener('keydown', tryPlay);
+          }).catch((err) => {
+            console.log('Autoplay prevented by browser. Waiting for interaction.', err);
+          });
+        }
+      };
+
+      // Try playing immediately
+      tryPlay();
+
+      // If blocked, wait for the first user interaction anywhere on the screen
+      document.addEventListener('click', tryPlay);
+      document.addEventListener('touchstart', tryPlay);
+      document.addEventListener('keydown', tryPlay);
+
+      return () => {
+        document.removeEventListener('click', tryPlay);
+        document.removeEventListener('touchstart', tryPlay);
+        document.removeEventListener('keydown', tryPlay);
+      };
     }
-  }, []);
+  }, [isPlaying]);
 
   return (
     <div className="fixed top-6 right-6 z-50">
