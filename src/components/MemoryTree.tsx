@@ -12,7 +12,7 @@ const lanternsData = [
   { id: 7, top: '45%', left: '85%', msg: "Remember when we first met." },
 ];
 
-const petals = Array.from({ length: 30 }).map((_, i) => ({
+const petals = Array.from({ length: 15 }).map((_, i) => ({
   id: i,
   left: Math.random() * 100,
   delay: Math.random() * 10,
@@ -39,25 +39,25 @@ export function MemoryTree() {
   };
 
   return (
-    <section className="relative w-full min-h-screen py-20 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#030712] via-[#081b29] to-[#020b14]">
+    <section className="relative w-full min-h-screen py-20 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#030712] via-[#081b29] to-[#020b14] transform-gpu">
       
       {/* Moonlight Beams */}
-      <div className="absolute top-[-20%] left-[-10%] w-[150%] h-[300px] bg-gradient-to-r from-transparent via-cyan-100/5 to-transparent rotate-[35deg] blur-3xl pointer-events-none" />
-      <div className="absolute top-[10%] right-[-20%] w-[150%] h-[400px] bg-gradient-to-r from-transparent via-blue-200/5 to-transparent rotate-[-40deg] blur-3xl pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[150%] h-[300px] bg-gradient-to-r from-transparent via-cyan-100/5 to-transparent rotate-[35deg] blur-3xl pointer-events-none will-change-transform" />
+      <div className="absolute top-[10%] right-[-20%] w-[150%] h-[400px] bg-gradient-to-r from-transparent via-blue-200/5 to-transparent rotate-[-40deg] blur-3xl pointer-events-none will-change-transform" />
 
       {/* Atmospheric Mist */}
       <motion.div 
-        className="absolute bottom-0 left-0 w-[200%] h-[40vh] bg-gradient-to-t from-emerald-900/10 via-blue-900/5 to-transparent blur-3xl pointer-events-none z-0"
+        className="absolute bottom-0 left-0 w-[200%] h-[40vh] bg-gradient-to-t from-emerald-900/10 via-blue-900/5 to-transparent blur-3xl pointer-events-none z-0 will-change-transform"
         animate={{ x: [0, -1000] }}
         transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Fireflies */}
+      {/* Fireflies (Reduced Count) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        {Array.from({ length: isComplete ? 80 : 30 }).map((_, i) => (
+        {Array.from({ length: isComplete ? 40 : 15 }).map((_, i) => (
           <motion.div
             key={`firefly-${i}`}
-            className="absolute bg-yellow-200 rounded-full shadow-[0_0_8px_#fef08a]"
+            className="absolute bg-yellow-200 rounded-full shadow-[0_0_8px_#fef08a] will-change-transform"
             style={{
               width: Math.random() * 3 + 1 + 'px',
               height: Math.random() * 3 + 1 + 'px',
@@ -79,12 +79,12 @@ export function MemoryTree() {
         ))}
       </div>
 
-      {/* Falling Petals (Increases on Complete) */}
+      {/* Falling Petals (Reduced Count) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        {petals.slice(0, isComplete ? petals.length : 10).map(petal => (
+        {petals.slice(0, isComplete ? petals.length : 6).map(petal => (
           <motion.div
             key={`petal-${petal.id}`}
-            className="absolute w-3 h-4 bg-pink-300/60 rounded-t-full rounded-bl-full shadow-[0_0_5px_rgba(244,114,182,0.4)]"
+            className="absolute w-3 h-4 bg-pink-300/60 rounded-t-full rounded-bl-full shadow-[0_0_5px_rgba(244,114,182,0.4)] will-change-transform"
             style={{ left: `${petal.left}%`, scale: petal.scale }}
             initial={{ top: "-10vh", rotate: 0 }}
             animate={{ 
@@ -162,7 +162,7 @@ export function MemoryTree() {
           <path d="M 350 450 Q 250 500 150 450" stroke="url(#trunkGrad)" strokeWidth="15" strokeLinecap="round" fill="none" filter="url(#glowTrunk)" />
           <path d="M 650 450 Q 750 500 850 450" stroke="url(#trunkGrad)" strokeWidth="15" strokeLinecap="round" fill="none" filter="url(#glowTrunk)" />
 
-          {/* Cinematic Foliage Clusters */}
+          {/* Cinematic Foliage Clusters (Optimized) */}
           {[
             {cx: 200, cy: 350, r: 140},
             {cx: 800, cy: 350, r: 140},
@@ -176,9 +176,9 @@ export function MemoryTree() {
             {cx: 500, cy: 350, r: 200},
           ].map((c, i) => (
             <g key={i}>
-              <circle cx={c.cx} cy={c.cy} r={c.r + 30} fill={isComplete ? "rgba(253,224,71,0.1)" : "rgba(244,114,182,0.15)"} filter="blur(25px)" className="transition-colors duration-[3s]" />
-              <circle cx={c.cx} cy={c.cy} r={c.r} fill="url(#leafGrad)" filter="url(#glowTree)" opacity="0.85" />
-              <circle cx={c.cx - 20} cy={c.cy - 20} r={c.r * 0.5} fill="#fbcfe8" opacity="0.3" filter="blur(15px)" />
+              <circle cx={c.cx} cy={c.cy} r={c.r} fill="url(#leafGrad)" opacity="0.9" />
+              {/* Only use blur for small core highlight to save GPU */}
+              <circle cx={c.cx - 20} cy={c.cy - 20} r={c.r * 0.4} fill="#fbcfe8" opacity="0.3" filter="blur(8px)" />
             </g>
           ))}
         </svg>

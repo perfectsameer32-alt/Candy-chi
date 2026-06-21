@@ -13,7 +13,7 @@ const orbitItems = [
   { id: 5, type: 'cinematic', msg: 'A smile can brighten a room. yours brightens memories.' }
 ];
 
-const petals = Array.from({ length: 20 }).map((_, i) => ({
+const petals = Array.from({ length: 8 }).map((_, i) => ({
   id: i,
   left: Math.random() * 100,
   delay: Math.random() * 10,
@@ -21,7 +21,7 @@ const petals = Array.from({ length: 20 }).map((_, i) => ({
   scale: 0.3 + Math.random() * 0.6
 }));
 
-const bgLanterns = Array.from({ length: 12 }).map((_, i) => ({
+const bgLanterns = Array.from({ length: 5 }).map((_, i) => ({
   id: i,
   left: Math.random() * 100,
   delay: Math.random() * 15,
@@ -49,33 +49,33 @@ export function DreamGallery({ photoUrl }: DreamGalleryProps) {
 
   // Orbital Time System
   const time = useMotionValue(0);
-  useAnimationFrame((t, delta) => {
+  useAnimationFrame((_t, delta) => {
     if (!isHovered) {
       time.set(time.get() + delta * 0.015);
     }
   });
 
-  const parentRotationZ = useTransform(time, v => v % 360);
+  const parentRotationZ = useTransform(time, (v: number) => v % 360);
 
   return (
     <section 
-      className="relative w-full min-h-screen py-20 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#1a0b2e] via-[#2a1142] to-[#120822]"
+      className="relative w-full min-h-screen py-20 flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#1a0b2e] via-[#2a1142] to-[#120822] transform-gpu"
       onMouseMove={handleMouseMove}
       style={{ perspective: 1200 }}
     >
       {/* Soft Fog Layers */}
       <motion.div 
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-fuchsia-900/30 via-indigo-900/10 to-transparent pointer-events-none"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-fuchsia-900/30 via-indigo-900/10 to-transparent pointer-events-none will-change-transform"
         animate={{ opacity: [0.5, 0.8, 0.5], scale: [1, 1.05, 1] }}
         transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
       />
       
-      {/* Twinkling Particles */}
+      {/* Twinkling Particles (Reduced Count) */}
       <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 80 }).map((_, i) => (
+        {Array.from({ length: 30 }).map((_, i) => (
           <motion.div
             key={`star-${i}`}
-            className="absolute bg-white rounded-full"
+            className="absolute bg-white rounded-full will-change-transform"
             style={{
               width: Math.random() * 2 + 'px',
               height: Math.random() * 2 + 'px',
@@ -89,12 +89,12 @@ export function DreamGallery({ photoUrl }: DreamGalleryProps) {
         ))}
       </div>
 
-      {/* Distant Background Lanterns */}
+      {/* Distant Background Lanterns (Reduced Count) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         {bgLanterns.map((lantern) => (
           <motion.div
             key={`lantern-${lantern.id}`}
-            className="absolute w-4 h-6 bg-orange-400 rounded-md shadow-[0_0_15px_#f97316] opacity-30 blur-[3px]"
+            className="absolute w-4 h-6 bg-orange-400 rounded-md shadow-[0_0_15px_#f97316] opacity-30 blur-[2px] will-change-transform"
             style={{ left: `${lantern.left}%`, scale: lantern.scale }}
             initial={{ bottom: "-10vh", rotate: -5 }}
             animate={{ 
@@ -111,12 +111,12 @@ export function DreamGallery({ photoUrl }: DreamGalleryProps) {
         ))}
       </div>
 
-      {/* Drifting Cherry Blossoms */}
+      {/* Drifting Cherry Blossoms (Reduced Count) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
         {petals.map(petal => (
           <motion.div
             key={`petal-${petal.id}`}
-            className="absolute w-4 h-5 bg-pink-300/40 rounded-t-full rounded-bl-full blur-[1px] shadow-[0_0_5px_rgba(244,114,182,0.3)]"
+            className="absolute w-4 h-5 bg-pink-300/40 rounded-t-full rounded-bl-full shadow-[0_0_5px_rgba(244,114,182,0.3)] will-change-transform"
             style={{ left: `${petal.left}%`, scale: petal.scale }}
             initial={{ top: "-10vh", rotate: 0 }}
             animate={{ 
@@ -266,7 +266,7 @@ export function DreamGallery({ photoUrl }: DreamGalleryProps) {
 
 // Sub-component for rendering the artistic styles
 function OrbitPhoto({ item, angle, time, radiusClass, photoUrl, onHoverStart, onHoverEnd }: any) {
-  const childRotationZ = useTransform(time, v => -(v % 360) - angle);
+  const childRotationZ = useTransform(time, (v: number) => -(v % 360) - angle);
   
   const renderCard = () => {
     switch(item.type) {
@@ -284,7 +284,7 @@ function OrbitPhoto({ item, angle, time, radiusClass, photoUrl, onHoverStart, on
       
       case 'glass':
         return (
-          <div className="w-28 h-36 md:w-36 md:h-48 bg-white/10 backdrop-blur-xl border border-white/30 rounded-xl p-2 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group-hover:shadow-[0_0_50px_rgba(255,255,255,0.4)] transition-all duration-500 relative">
+          <div className="w-28 h-36 md:w-36 md:h-48 bg-white/10 backdrop-blur-md border border-white/30 rounded-xl p-2 shadow-[0_20px_40px_rgba(0,0,0,0.5)] group-hover:shadow-[0_0_50px_rgba(255,255,255,0.4)] transition-all duration-500 relative">
             <div className="w-full h-full overflow-hidden rounded-lg">
               <img src={photoUrl || '/api/placeholder/400/500'} className="w-full h-full object-cover saturate-[1.2] brightness-[1.1]" alt="Glass" />
             </div>

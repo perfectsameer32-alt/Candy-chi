@@ -13,16 +13,16 @@ const flowersData = [
   { id: 8, top: '15%', left: '85%', message: "Never let anyone dull your magical sparkle." },
 ];
 
-const grassBlades = Array.from({length: 60}).map((_, i) => ({
+const grassBlades = Array.from({length: 30}).map((_, i) => ({
   id: i,
-  left: i * 1.6 + Math.random() * 2,
+  left: i * 3.3 + Math.random() * 2,
   height: 8 + Math.random() * 15,
   delay: Math.random() * 3,
   duration: 4 + Math.random() * 4,
   opacity: 0.4 + Math.random() * 0.6
 }));
 
-const petals = Array.from({length: 15}).map((_, i) => ({
+const petals = Array.from({length: 8}).map((_, i) => ({
   id: i,
   left: Math.random() * 100,
   delay: Math.random() * 10,
@@ -49,7 +49,7 @@ export function GardenOfWishes() {
   };
 
   return (
-    <section className="relative w-full min-h-screen py-24 flex flex-col items-center overflow-hidden bg-gradient-to-b from-[#020513] via-[#0a1128] to-[#0d1f35]">
+    <section className="relative w-full min-h-screen py-24 flex flex-col items-center overflow-hidden bg-gradient-to-b from-[#020513] via-[#0a1128] to-[#0d1f35] transform-gpu">
       
       {/* The Great Illumination (Grand Finale Lighting) */}
       <motion.div 
@@ -75,12 +75,12 @@ export function GardenOfWishes() {
 
       {/* Mist Layers */}
       <motion.div 
-        className="absolute bottom-0 w-[200vw] h-[40vh] bg-gradient-to-t from-indigo-900/40 to-transparent blur-3xl pointer-events-none z-0"
+        className="absolute bottom-0 w-[200vw] h-[40vh] bg-gradient-to-t from-indigo-900/40 to-transparent blur-3xl pointer-events-none z-0 will-change-transform"
         animate={{ x: [0, -1000] }}
         transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
       />
       <motion.div 
-        className="absolute bottom-[10vh] w-[200vw] h-[30vh] bg-gradient-to-t from-cyan-900/20 to-transparent blur-2xl pointer-events-none z-0"
+        className="absolute bottom-[10vh] w-[200vw] h-[30vh] bg-gradient-to-t from-cyan-900/20 to-transparent blur-2xl pointer-events-none z-0 will-change-transform"
         animate={{ x: [-1000, 0] }}
         transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
       />
@@ -116,12 +116,12 @@ export function GardenOfWishes() {
         )}
       </AnimatePresence>
 
-      {/* Floating Cherry Blossoms */}
+      {/* Floating Cherry Blossoms (Optimized Count) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
         {petals.map(petal => (
           <motion.div
             key={`garden-petal-${petal.id}`}
-            className="absolute w-3 h-4 bg-pink-200/40 rounded-t-full rounded-bl-full shadow-[0_0_5px_rgba(255,192,203,0.3)]"
+            className="absolute w-3 h-4 bg-pink-200/40 rounded-t-full rounded-bl-full shadow-[0_0_5px_rgba(255,192,203,0.3)] will-change-transform"
             style={{ left: `${petal.left}%`, scale: petal.scale }}
             initial={{ top: "-10vh", rotate: 0 }}
             animate={{ 
@@ -138,12 +138,12 @@ export function GardenOfWishes() {
         ))}
       </div>
 
-      {/* Fireflies */}
+      {/* Fireflies (Optimized Count) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
-        {Array.from({ length: isComplete ? 60 : 30 }).map((_, i) => (
+        {Array.from({ length: isComplete ? 30 : 15 }).map((_, i) => (
           <motion.div
             key={`firefly-${i}`}
-            className="absolute bg-yellow-300 rounded-full box-glow"
+            className="absolute bg-yellow-300 rounded-full box-glow will-change-transform"
             style={{
               width: Math.random() * 4 + 1 + 'px',
               height: Math.random() * 4 + 1 + 'px',
@@ -300,12 +300,12 @@ export function GardenOfWishes() {
         {grassBlades.map(g => (
           <motion.div 
             key={`grass-${g.id}`}
-            className="absolute bottom-[-10px] w-1.5 rounded-t-full origin-bottom"
+            className="absolute bottom-[-10px] w-1.5 rounded-t-full origin-bottom will-change-transform"
             style={{ 
               left: `${g.left}%`, 
               height: `${g.height}vh`,
               background: `linear-gradient(to top, #022c22, rgba(4, 47, 46, ${g.opacity}))`,
-              filter: `blur(${g.height > 18 ? 2 : 0}px)`, // Foreground blur for depth
+              filter: `blur(${g.height > 18 ? 2 : 0}px)`,
               zIndex: g.height > 18 ? 40 : 30
             }}
             animate={{ rotate: [-8, 8, -8] }}

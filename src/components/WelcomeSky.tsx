@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, useMotionValue, useSpring, type Variants } from 'framer-motion';
 import { ChevronDown, Sparkles } from 'lucide-react';
 
 interface WelcomeSkyProps {
@@ -19,13 +19,13 @@ const createLanterns = (count: number, scaleRange: [number, number], durationRan
   }));
 };
 
-const bgLanterns = createLanterns(10, [0.15, 0.3], [30, 45], 4);
-const midLanterns = createLanterns(8, [0.4, 0.6], [20, 30], 1);
-const fgLanterns = createLanterns(6, [0.8, 1.2], [10, 18], 0);
+const bgLanterns = createLanterns(5, [0.15, 0.3], [30, 45], 4);
+const midLanterns = createLanterns(4, [0.4, 0.6], [20, 30], 1);
+const fgLanterns = createLanterns(3, [0.8, 1.2], [10, 18], 0);
 
 const allLanterns = [...bgLanterns, ...midLanterns, ...fgLanterns];
 
-const petals = Array.from({ length: 10 }).map((_, i) => ({
+const petals = Array.from({ length: 6 }).map((_, i) => ({
   id: i,
   left: Math.random() * 100,
   delay: Math.random() * 10,
@@ -55,10 +55,10 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
     tiltX.set(y);
     tiltY.set(x);
 
-    // Occasional sparkle trail
-    if (Math.random() > 0.85) {
+    // Occasional sparkle trail (Reduced frequency for performance)
+    if (Math.random() > 0.92) {
       const id = Date.now() + Math.random();
-      setSparkles(prev => [...prev.slice(-15), { id, x: clientX, y: clientY }]);
+      setSparkles(prev => [...prev.slice(-8), { id, x: clientX, y: clientY }]);
       setTimeout(() => {
         setSparkles(prev => prev.filter(s => s.id !== id));
       }, 800);
@@ -80,7 +80,7 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
       transition: { staggerChildren: 0.08, delayChildren: 4 }
     }
   };
-  const letterVariants = {
+  const letterVariants: Variants = {
     hidden: { opacity: 0, y: 15, filter: "blur(8px)" },
     visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1, ease: "easeOut" } }
   };
@@ -88,7 +88,7 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
   return (
     <section 
       ref={containerRef}
-      className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#7da7d9] via-[#fbc193] to-[#f49a88]"
+      className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#7da7d9] via-[#fbc193] to-[#f49a88] transform-gpu"
       onMouseMove={handleMouseMove}
       style={{ perspective: 1200 }}
     >
@@ -102,7 +102,7 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
 
       {/* Atmospheric Sun Rays & Fog */}
       <motion.div 
-        className="absolute bottom-[20vh] left-1/2 -translate-x-1/2 w-[150vw] h-[100vh] bg-[conic-gradient(from_0deg_at_50%_100%,rgba(255,255,255,0)_0deg,rgba(255,220,130,0.15)_20deg,rgba(255,255,255,0)_40deg)] rounded-full blur-[60px] pointer-events-none mix-blend-overlay"
+        className="absolute bottom-[20vh] left-1/2 -translate-x-1/2 w-[150vw] h-[100vh] bg-[conic-gradient(from_0deg_at_50%_100%,rgba(255,255,255,0)_0deg,rgba(255,220,130,0.15)_20deg,rgba(255,255,255,0)_40deg)] rounded-full blur-[60px] pointer-events-none mix-blend-overlay will-change-transform"
         animate={{ rotate: [0, 5, 0, -5, 0] }}
         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
       />
@@ -110,12 +110,12 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
 
       {/* Gentle Clouds */}
       <motion.div 
-        className="absolute top-[20%] left-[10%] w-[40vw] h-[10vh] bg-white/20 rounded-full blur-3xl"
+        className="absolute top-[20%] left-[10%] w-[40vw] h-[10vh] bg-white/20 rounded-full blur-3xl will-change-transform"
         animate={{ x: [0, 100, 0] }}
         transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div 
-        className="absolute top-[30%] right-[10%] w-[50vw] h-[15vh] bg-white/10 rounded-full blur-3xl"
+        className="absolute top-[30%] right-[10%] w-[50vw] h-[15vh] bg-white/10 rounded-full blur-3xl will-change-transform"
         animate={{ x: [0, -150, 0] }}
         transition={{ duration: 50, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -125,7 +125,7 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
         {petals.map(petal => (
           <motion.div
             key={`petal-${petal.id}`}
-            className="absolute w-3 h-4 bg-pink-200/60 rounded-t-full rounded-bl-full shadow-[0_0_5px_rgba(255,192,203,0.5)]"
+            className="absolute w-3 h-4 bg-pink-200/60 rounded-t-full rounded-bl-full shadow-[0_0_5px_rgba(255,192,203,0.5)] will-change-transform"
             style={{ left: `${petal.left}%`, scale: petal.scale, filter: `blur(${petal.blur}px)` }}
             initial={{ top: "-10vh", rotate: 0 }}
             animate={{ 
@@ -146,7 +146,7 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
       {allLanterns.map((lantern) => (
         <motion.div
           key={`lantern-${lantern.id}`}
-          className="absolute flex flex-col items-center justify-center opacity-95"
+          className="absolute flex flex-col items-center justify-center opacity-95 will-change-transform"
           style={{ 
             left: `${lantern.left}%`, 
             scale: lantern.scale,
@@ -158,7 +158,7 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
             bottom: isTransitioning ? "150vh" : "120vh", 
             opacity: isTransitioning ? 0 : [0, 1, 1, 0],
             rotate: [3, -3, 3, -3, 3],
-            x: [0, 15, -15, 0] // Gentle wind sway
+            x: [0, 15, -15, 0]
           }}
           transition={{
             bottom: { duration: isTransitioning ? 1.5 : lantern.duration, ease: isTransitioning ? "easeIn" : "linear", repeat: isTransitioning ? 0 : Infinity, delay: isTransitioning ? 0 : lantern.delay },
@@ -168,49 +168,33 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
           }}
         >
           {/* Lantern Body */}
-          <div className="relative w-10 h-14 bg-gradient-to-b from-amber-300 via-orange-400 to-red-500 rounded-t-xl rounded-b-lg shadow-[0_0_40px_rgba(249,115,22,0.8)] border border-orange-200/40">
+          <div className="relative w-10 h-14 bg-gradient-to-b from-amber-300 via-orange-400 to-red-500 rounded-t-xl rounded-b-lg shadow-[0_0_40px_rgba(249,115,22,0.8)] border border-orange-200/40 transform-gpu">
             {/* Bright core flame */}
             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-yellow-100 rounded-full blur-[3px] shadow-[0_0_15px_#fef08a]" />
           </div>
-          
-          {/* Occasional emitting spark */}
-          {lantern.blur === 0 && (
-            <motion.div 
-              className="absolute -bottom-2 w-1 h-1 bg-yellow-200 rounded-full"
-              animate={{ y: [0, 20], opacity: [1, 0], scale: [1, 0] }}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: Math.random() * 5 }}
-            />
-          )}
         </motion.div>
       ))}
 
-      {/* Water Reflection Section */}
+      {/* Water Reflection Section (Optimized: No SVG Filter) */}
       <div className="absolute bottom-0 left-0 w-full h-[25vh] overflow-hidden z-20">
-        <svg className="hidden">
-          <filter id="water-distortion">
-            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.1" numOctaves="2" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-        </svg>
-
         {/* Ocean Base */}
         <div className="absolute inset-0 bg-gradient-to-b from-orange-300/30 via-sky-700/50 to-blue-950/90 backdrop-blur-md border-t border-white/30" />
         
         {/* Soft Water Ripples */}
-        <motion.div className="absolute top-0 w-[200%] h-3 bg-amber-100/30 rounded-full blur-[2px]" animate={{ x: [0, -500] }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} />
-        <motion.div className="absolute top-4 w-[200%] h-4 bg-orange-200/20 rounded-full blur-[4px]" animate={{ x: [-500, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} />
-        <motion.div className="absolute top-10 w-[200%] h-8 bg-cyan-400/10 rounded-full blur-[8px]" animate={{ x: [0, -800] }} transition={{ duration: 35, repeat: Infinity, ease: "linear" }} />
+        <motion.div className="absolute top-0 w-[200%] h-3 bg-amber-100/30 rounded-full blur-[2px] will-change-transform" animate={{ x: [0, -500] }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} />
+        <motion.div className="absolute top-4 w-[200%] h-4 bg-orange-200/20 rounded-full blur-[4px] will-change-transform" animate={{ x: [-500, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} />
+        <motion.div className="absolute top-10 w-[200%] h-8 bg-cyan-400/10 rounded-full blur-[8px] will-change-transform" animate={{ x: [0, -800] }} transition={{ duration: 35, repeat: Infinity, ease: "linear" }} />
 
-        {/* Reflected Lanterns with distortion */}
-        <div className="absolute inset-0" style={{ filter: "url(#water-distortion)" }}>
+        {/* Reflected Lanterns (Without Heavy SVG Distortion) */}
+        <div className="absolute inset-0 opacity-50 mix-blend-soft-light">
           {allLanterns.map((lantern) => (
             <motion.div
               key={`reflection-${lantern.id}`}
-              className="absolute flex items-start justify-center"
+              className="absolute flex items-start justify-center will-change-transform"
               style={{ 
                 left: `${lantern.left}%`, 
                 scale: lantern.scale,
-                filter: `blur(${lantern.blur + 6}px)`,
+                filter: `blur(${lantern.blur + 8}px)`,
               }}
               initial={{ bottom: "50vh", opacity: 0 }}
               animate={{ 
@@ -224,7 +208,7 @@ export function WelcomeSky({ photoUrl, onBegin }: WelcomeSkyProps) {
                 x: { duration: 12 + Math.random() * 6, repeat: Infinity, ease: "easeInOut" }
               }}
             >
-              <div className="w-10 h-14 bg-gradient-to-t from-amber-300 via-orange-400 to-red-500 rounded-b-xl rounded-t-lg shadow-[0_0_30px_#f97316]" />
+              <div className="w-10 h-14 bg-gradient-to-t from-amber-300 via-orange-400 to-red-500 rounded-b-xl rounded-t-lg" />
             </motion.div>
           ))}
         </div>

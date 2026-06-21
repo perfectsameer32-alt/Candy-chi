@@ -61,6 +61,8 @@ export function StarConstellation({ photoUrl }: StarConstellationProps) {
   
   const containerRef = useRef<HTMLDivElement>(null);
 
+
+
   useEffect(() => {
     // Only check the main 12 stars for completion
     const mainStarsClicked = starsData.every(s => clickedStars.includes(s.id));
@@ -107,12 +109,12 @@ export function StarConstellation({ photoUrl }: StarConstellationProps) {
         <Moon className="w-full h-full text-yellow-100/30" strokeWidth={0.5} />
       </motion.div>
 
-      {/* Tiny background stars */}
+      {/* Tiny background stars (Optimized Count) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60">
-        {Array.from({ length: 150 }).map((_, i) => (
+        {Array.from({ length: 40 }).map((_, i) => (
           <motion.div
             key={`bg-star-${i}`}
-            className="absolute bg-white rounded-full"
+            className="absolute bg-white rounded-full will-change-transform"
             style={{
               width: Math.random() * 2 + 'px',
               height: Math.random() * 2 + 'px',
@@ -128,7 +130,7 @@ export function StarConstellation({ photoUrl }: StarConstellationProps) {
 
       {/* Shooting Stars */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        {Array.from({ length: 3 }).map((_, i) => (
+        {Array.from({ length: 2 }).map((_, i) => (
           <motion.div
             key={`shooting-star-${i}`}
             className="absolute w-1 h-1 bg-white rounded-full shadow-[0_0_10px_white]"
@@ -291,10 +293,10 @@ export function StarConstellation({ photoUrl }: StarConstellationProps) {
                 
                 {/* Falling Petals Effect around photo */}
                 <div className="absolute inset-[-100px] pointer-events-none">
-                   {Array.from({ length: 15 }).map((_, i) => (
+                   {Array.from({ length: 8 }).map((_, i) => (
                       <motion.div
                         key={`finale-petal-${i}`}
-                        className="absolute w-3 h-3 bg-pink-300 rounded-full blur-[1px]"
+                        className="absolute w-3 h-3 bg-pink-300 rounded-full blur-[1px] will-change-transform"
                         initial={{ 
                           x: 0, y: 0, 
                           opacity: 0,
