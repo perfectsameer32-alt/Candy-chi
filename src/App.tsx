@@ -11,6 +11,11 @@ function App() {
   // Hardcoded photo URL. Place your image as 'photo.jpg' inside the 'public' folder.
   const photoUrl = "/photo.jpg"; 
   
+  // 📸 BESTIE PHOTO IN MEMORY TREE (Her with Me):
+  // Put your picture in the 'public' folder as 'bestie.jpg',
+  // or change this path/URL to wherever your picture is:
+  const bestiePhotoUrl = "/bestie.jpg";
+  
   // Ref for the first content section after the welcome screen
   const gardenRef = useRef<HTMLDivElement>(null);
 
@@ -37,7 +42,7 @@ function App() {
           
           <DreamGallery photoUrl={photoUrl} />
           
-          <MemoryTree />
+          <MemoryTree bestiePhotoUrl={bestiePhotoUrl} />
 
           <StarConstellation photoUrl={photoUrl} />
         </motion.div>

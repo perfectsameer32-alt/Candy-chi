@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles } from 'lucide-react';
+import { X, Sparkles, Heart, Eye } from 'lucide-react';
+
+interface MemoryTreeProps {
+  /**
+   * 📸 PASTE YOUR BESTIE PIC HERE:
+   * By default, it loads from `/bestie.jpg` in the `public` folder.
+   * You can also pass any image path, import, or URL here.
+   */
+  bestiePhotoUrl?: string;
+}
 
 const lanternsData = [
   { id: 1, top: '35%', left: '20%', msg: "A memory of laughter that echoes forever." },
@@ -20,10 +29,11 @@ const petals = Array.from({ length: 15 }).map((_, i) => ({
   scale: 0.3 + Math.random() * 0.6
 }));
 
-export function MemoryTree() {
+export function MemoryTree({ bestiePhotoUrl = '/bestie.jpg' }: MemoryTreeProps) {
   const [openedLanterns, setOpenedLanterns] = useState<number[]>([]);
   const [activeMessage, setActiveMessage] = useState<string | null>(null);
   const [isComplete, setIsComplete] = useState(false);
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
 
   useEffect(() => {
     if (openedLanterns.length === lanternsData.length && !isComplete) {
@@ -52,7 +62,7 @@ export function MemoryTree() {
         transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Fireflies (Reduced Count) */}
+      {/* Fireflies */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
         {Array.from({ length: isComplete ? 40 : 15 }).map((_, i) => (
           <motion.div
@@ -79,7 +89,7 @@ export function MemoryTree() {
         ))}
       </div>
 
-      {/* Falling Petals (Reduced Count) */}
+      {/* Falling Petals */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
         {petals.slice(0, isComplete ? petals.length : 6).map(petal => (
           <motion.div
@@ -101,17 +111,18 @@ export function MemoryTree() {
         ))}
       </div>
 
-      <div className="relative z-20 text-center mb-4 pointer-events-none">
-        <h2 className="text-4xl md:text-6xl font-serif text-blue-50 mb-4 text-glow drop-shadow-[0_0_20px_rgba(219,234,254,0.3)]">
+      {/* Header */}
+      <div className="relative z-20 text-center mb-2 pointer-events-none px-4">
+        <h2 className="text-4xl md:text-6xl font-serif text-blue-50 mb-3 text-glow drop-shadow-[0_0_20px_rgba(219,234,254,0.3)]">
           The Memory Tree
         </h2>
-        <p className="text-blue-200/60 text-lg font-light tracking-widest">
-          Every light holds a story
+        <p className="text-blue-200/70 text-base md:text-lg font-light tracking-widest">
+          Every light holds a story, and the center holds us
         </p>
       </div>
 
       {/* The Magical Tree Container */}
-      <div className="relative w-[95vw] max-w-[900px] aspect-square mx-auto mt-4 z-20">
+      <div className="relative w-[95vw] max-w-[920px] aspect-square mx-auto mt-2 z-20">
         
         {/* Tree SVG Artwork */}
         <svg viewBox="0 0 1000 1000" className="w-full h-full drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
@@ -142,7 +153,7 @@ export function MemoryTree() {
           </defs>
 
           {/* Core glow */}
-          <circle cx="500" cy="400" r="350" fill={isComplete ? "rgba(253,224,71,0.15)" : "rgba(244,114,182,0.05)"} filter="blur(50px)" className="transition-colors duration-1000" />
+          <circle cx="500" cy="400" r="350" fill={isComplete ? "rgba(253,224,71,0.18)" : "rgba(244,114,182,0.06)"} filter="blur(50px)" className="transition-colors duration-1000" />
 
           {/* Main Trunk */}
           <path d="M 450 1000 Q 480 600 500 500 Q 520 600 550 1000 Z" fill="url(#trunkGrad)" filter="url(#glowTrunk)" />
@@ -162,7 +173,7 @@ export function MemoryTree() {
           <path d="M 350 450 Q 250 500 150 450" stroke="url(#trunkGrad)" strokeWidth="15" strokeLinecap="round" fill="none" filter="url(#glowTrunk)" />
           <path d="M 650 450 Q 750 500 850 450" stroke="url(#trunkGrad)" strokeWidth="15" strokeLinecap="round" fill="none" filter="url(#glowTrunk)" />
 
-          {/* Cinematic Foliage Clusters (Optimized) */}
+          {/* Cinematic Foliage Clusters */}
           {[
             {cx: 200, cy: 350, r: 140},
             {cx: 800, cy: 350, r: 140},
@@ -177,11 +188,90 @@ export function MemoryTree() {
           ].map((c, i) => (
             <g key={i}>
               <circle cx={c.cx} cy={c.cy} r={c.r} fill="url(#leafGrad)" opacity="0.9" />
-              {/* Only use blur for small core highlight to save GPU */}
               <circle cx={c.cx - 20} cy={c.cy - 20} r={c.r * 0.4} fill="#fbcfe8" opacity="0.3" filter="blur(8px)" />
             </g>
           ))}
         </svg>
+
+        {/* ======================================================== */}
+        {/* CENTERPIECE: The Bestie Memory Polaroid (Her with Me)   */}
+        {/* ======================================================== */}
+        <div 
+          className="absolute z-20 -translate-x-1/2"
+          style={{ top: '40%', left: '50%' }}
+        >
+          <motion.div
+            className="relative flex flex-col items-center origin-top cursor-pointer select-none group"
+            animate={{ 
+              rotate: [-2.5, 2.5, -2.5],
+              y: [-2, 3, -2]
+            }}
+            transition={{ 
+              duration: 5.5, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+            onClick={() => setIsPhotoModalOpen(true)}
+          >
+            {/* Hanging Golden Fairy Cord */}
+            <div className="flex flex-col items-center">
+              <div className="w-[2px] h-10 md:h-14 bg-gradient-to-b from-amber-300 via-yellow-200 to-amber-400 shadow-[0_0_10px_#fef08a]" />
+              
+              {/* Little golden clip with heart */}
+              <div className="relative -mt-1 w-7 h-3.5 bg-gradient-to-r from-amber-400 via-yellow-100 to-amber-400 rounded-sm shadow-md border border-amber-100 flex items-center justify-center">
+                <Heart className="w-2.5 h-2.5 text-rose-500 fill-rose-500" />
+              </div>
+            </div>
+
+            {/* Glowing Aura Behind Frame */}
+            <div className={`absolute -inset-4 bg-gradient-to-r from-pink-500/25 via-amber-300/30 to-purple-500/25 rounded-3xl blur-2xl transition-opacity duration-700 pointer-events-none ${isComplete ? 'opacity-100' : 'opacity-70 group-hover:opacity-100'}`} />
+
+            {/* The Polaroid Keepsake Frame */}
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="relative w-44 sm:w-52 md:w-60 bg-gradient-to-b from-[#fffefc] to-[#fbf7ee] text-stone-800 p-2.5 sm:p-3 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.6),0_0_30px_rgba(251,191,36,0.3)] border border-amber-200/70 hover:border-amber-400/90 transition-all duration-300"
+            >
+              <div className="relative group/photo">
+                {/* Photo container */}
+                <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-stone-950 border border-stone-200 shadow-inner">
+                  <img 
+                    src={bestiePhotoUrl} 
+                    alt="Her with Me - Besties" 
+                    className="w-full h-full object-cover group-hover/photo:scale-105 transition-transform duration-500 filter contrast-[1.03] brightness-[1.02]"
+                  />
+                  
+                  {/* Subtle warm photo overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-30 group-hover/photo:opacity-10 transition-opacity" />
+
+                  {/* Hover Quick View Pill */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/photo:opacity-100 bg-black/30 backdrop-blur-[1px] transition-opacity">
+                    <span className="px-3 py-1 rounded-full bg-white/95 text-stone-900 text-xs font-medium flex items-center gap-1.5 shadow-md">
+                      <Eye className="w-3.5 h-3.5 text-rose-500" /> View Memory
+                    </span>
+                  </div>
+                </div>
+
+                {/* Polaroid Handwritten Caption */}
+                <div className="pt-2 sm:pt-2.5 pb-0.5 text-center">
+                  <p className="font-serif italic text-xs sm:text-sm font-semibold text-stone-800 flex items-center justify-center gap-1">
+                    <Heart className="w-3 h-3 text-rose-500 fill-rose-500 animate-pulse" />
+                    Besties Forever
+                    <Sparkles className="w-3 h-3 text-amber-500" />
+                  </p>
+                  <p className="text-[10px] text-stone-500 font-sans tracking-wide">
+                    Her with Me ✨
+                  </p>
+                </div>
+              </div>
+
+              {/* Sparkle badge */}
+              <div className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-400 to-rose-400 text-white rounded-full p-1 shadow-md">
+                <Sparkles className="w-3 h-3" />
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
 
         {/* Hanging Lanterns */}
         {lanternsData.map((lantern) => {
@@ -253,7 +343,7 @@ export function MemoryTree() {
         )}
       </AnimatePresence>
 
-      {/* Glassmorphism Message Modal */}
+      {/* Glassmorphism Lantern Message Modal */}
       <AnimatePresence>
         {activeMessage && !isComplete && (
           <motion.div
@@ -289,6 +379,73 @@ export function MemoryTree() {
               <p className="text-2xl font-serif text-amber-50 mb-2 leading-relaxed text-glow drop-shadow-md">
                 "{activeMessage}"
               </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ======================================================== */}
+      {/* BESTIE PHOTO SPOTLIGHT MODAL                              */}
+      {/* ======================================================== */}
+      <AnimatePresence>
+        {isPhotoModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/85 backdrop-blur-xl p-4"
+            onClick={() => setIsPhotoModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.88, y: 25, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.88, y: 25, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 280 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-lg w-full p-6 sm:p-8 rounded-3xl border border-amber-200/40 shadow-[0_25px_60px_rgba(0,0,0,0.8),0_0_50px_rgba(251,191,36,0.25)] bg-[#0f172a]/95 backdrop-blur-2xl text-center overflow-hidden"
+            >
+              {/* Ambient backdrop glow inside modal */}
+              <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-gradient-to-r from-pink-500/20 via-amber-400/30 to-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Close button */}
+              <button 
+                onClick={() => setIsPhotoModalOpen(false)}
+                className="absolute top-5 right-5 text-white/60 hover:text-white transition-colors z-20 p-2 rounded-full hover:bg-white/10"
+              >
+                <X size={22} strokeWidth={1.8} />
+              </button>
+
+              {/* Header Badge */}
+              <div className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-amber-400/10 border border-amber-300/30 text-amber-200 text-xs font-medium mb-4">
+                <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400" />
+                <span>Our Sacred Memory Spot</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              </div>
+
+              {/* Photo Display */}
+              <div className="relative mx-auto max-w-sm aspect-[4/3] rounded-2xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.5)] border-2 border-amber-200/50 mb-5 bg-black">
+                <img 
+                  src={bestiePhotoUrl} 
+                  alt="Her with Me" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Title & Message */}
+              <h3 className="text-2xl sm:text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-pink-100 to-amber-200 mb-2">
+                The Bestest of Besties 🌸
+              </h3>
+              <p className="text-stone-300/90 text-sm sm:text-base font-light leading-relaxed mb-6 px-2">
+                "Through every laugh, every inside joke, and every shared dream — having you in my life is pure magic. Always right here in the heart of this tree."
+              </p>
+
+              {/* Close Modal Button */}
+              <button
+                onClick={() => setIsPhotoModalOpen(false)}
+                className="px-6 py-2 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-400/40 text-sm font-medium transition-all"
+              >
+                Close Memory
+              </button>
             </motion.div>
           </motion.div>
         )}
